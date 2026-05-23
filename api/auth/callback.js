@@ -40,24 +40,26 @@ export default async function handler(req, res) {
     return res.redirect(302, '/?error=token_exchange_failed');
   }
 
-  // Fetch profile via OpenID Connect userinfo endpoint
-  const profileRes = await fetch('https://api.linkedin.com/v2/userinfo', {
-    headers: { Authorization: `Bearer ${tokenData.access_token}` },
-  });
+  // Fetch member ID + name via the v2/me endpoint (works with r_liteprofile + w_member_social)
+  const meRes = await fetch(
+    'https://api.linkedin.com/v2/me?projection=(id,localizedFirstName,localizedLastName)',
+    { headers: { Authorization: `Bearer ${tokenData.access_token}` } }
+  );
 
-  if (!profileRes.ok) {
+  if (!meRes.ok) {
+    console.error('Profile fetch failed:', await meRes.text());
     return res.redirect(302, '/?error=profile_fetch_failed');
   }
 
-  const profile = await profileRes.json();
+  const me = await meRes.json();
+  const name = [me.localizedFirstName, me.localizedLastName].filter(Boolean).join(' ') || 'LinkedIn User';
 
   // Encode auth payload into an httpOnly cookie
   const payload = Buffer.from(
     JSON.stringify({
       access_token: tokenData.access_token,
-      sub: profile.sub,               // used as the LinkedIn member URN
-      name: profile.name || 'LinkedIn User',
-      picture: profile.picture || null,
+      sub: me.id,                      // used as the LinkedIn member URN
+      name,
       expires_at: Date.now() + (tokenData.expires_in ?? 5184000) * 1000,
     })
   ).toString('base64');
