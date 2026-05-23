@@ -1,4 +1,5 @@
 import { parseCookies, cookieFlags } from '../_utils.js';
+import { redis } from '../_redis.js';
 
 export default async function handler(req, res) {
   const { LINKEDIN_CLIENT_ID, LINKEDIN_CLIENT_SECRET, VITE_APP_URL } = process.env;
@@ -52,16 +53,19 @@ export default async function handler(req, res) {
 
   const profile = await profileRes.json();
 
+  const authPayload = {
+    access_token: tokenData.access_token,
+    sub: profile.sub,
+    name: profile.name || 'LinkedIn User',
+    picture: profile.picture || null,
+    expires_at: Date.now() + (tokenData.expires_in ?? 5184000) * 1000,
+  };
+
+  // Persist to Redis so the cron job can post without a browser session
+  await redis.set('linkedin_auth', authPayload);
+
   // Encode auth payload into an httpOnly cookie
-  const payload = Buffer.from(
-    JSON.stringify({
-      access_token: tokenData.access_token,
-      sub: profile.sub,               // used as the LinkedIn member URN
-      name: profile.name || 'LinkedIn User',
-      picture: profile.picture || null,
-      expires_at: Date.now() + (tokenData.expires_in ?? 5184000) * 1000,
-    })
-  ).toString('base64');
+  const payload = Buffer.from(JSON.stringify(authPayload)).toString('base64');
 
   res.setHeader('Set-Cookie', [
     `linkedin_auth=${payload}; ${cookieFlags}; Max-Age=5184000`,
