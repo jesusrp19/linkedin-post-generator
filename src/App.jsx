@@ -93,7 +93,10 @@ export default function App() {
       const res = await fetch('/api/post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: generatedPost }),
+        body: JSON.stringify({
+          text: generatedPost,
+          imageBase64: mode === 'update' ? image?.base64 ?? null : null,
+        }),
       });
 
       const data = await res.json();
