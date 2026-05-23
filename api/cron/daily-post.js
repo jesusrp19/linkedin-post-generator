@@ -2,27 +2,29 @@ import Anthropic from '@anthropic-ai/sdk';
 import { redis } from '../_redis.js';
 
 const TOPICS = [
-  { topic: 'The hidden cost of technical debt in enterprise IT projects and how to communicate it to leadership', keywords: 'technical debt software engineering' },
-  { topic: 'Why digital transformation fails: the people problem nobody talks about', keywords: 'digital transformation business team' },
-  { topic: 'How AI copilots are changing the daily workflow of IT consultants in 2025', keywords: 'artificial intelligence workplace technology' },
-  { topic: 'Managing scope creep in IT consulting engagements: lessons learned', keywords: 'project management consulting office' },
-  { topic: 'The shift from project-based to product-based IT delivery — what it means for consultants', keywords: 'agile product development team' },
-  { topic: 'Cloud cost optimisation: the overlooked ROI opportunity in most IT budgets', keywords: 'cloud computing data center server' },
-  { topic: 'Why IT governance frameworks (ITIL, COBIT) still matter even in agile organisations', keywords: 'IT governance business strategy' },
-  { topic: "The consultant's dilemma: when to recommend buy vs. build", keywords: 'software development business decision' },
-  { topic: 'Cybersecurity is now a boardroom conversation — what IT leaders need to know', keywords: 'cybersecurity data protection technology' },
-  { topic: 'How to run a discovery workshop that actually surfaces real business needs', keywords: 'business workshop collaboration team meeting' },
-  { topic: 'The underrated skill in IT consulting: translating technical risk into business language', keywords: 'business communication strategy presentation' },
-  { topic: 'Lessons from failed ERP implementations and what good looks like', keywords: 'enterprise software implementation business' },
-  { topic: 'Why most IT roadmaps become obsolete within 12 months (and how to fix that)', keywords: 'IT strategy roadmap planning technology' },
-  { topic: 'Data quality: the unglamorous foundation of every successful analytics project', keywords: 'data analytics dashboard technology' },
-  { topic: 'IT outsourcing in 2025: what to keep in-house and what to delegate', keywords: 'outsourcing business partnership team' },
-  { topic: 'Building trust with a new client in the first 30 days of an IT engagement', keywords: 'business handshake trust partnership meeting' },
-  { topic: 'The rise of the fractional CTO — and what it signals about IT leadership needs', keywords: 'CTO leadership technology executive' },
-  { topic: 'How to measure the real impact of an IT consulting engagement beyond deliverables', keywords: 'business results measurement success metrics' },
+  { topic: 'Why most e-government projects fail citizens even when the technology works perfectly', keywords: 'government digital services citizens technology' },
+  { topic: 'The real barriers to digital transformation in the public sector — and they are not technical', keywords: 'public sector digital transformation government' },
+  { topic: 'How AI is reshaping public service delivery and what governments need to get right', keywords: 'artificial intelligence government public services' },
+  { topic: 'Open data as a driver of public sector innovation: what good looks like', keywords: 'open data government transparency innovation' },
+  { topic: 'E-governance in 2025: moving from digitalising paperwork to reimagining public services', keywords: 'e-governance digital government services' },
+  { topic: 'Why citizen-centred design is still the exception and not the rule in government IT', keywords: 'citizen experience government digital design' },
+  { topic: 'The governance gap: why public sector digital strategies rarely survive contact with reality', keywords: 'public sector governance strategy government' },
+  { topic: 'Lessons from the most successful digital government transformations in Europe', keywords: 'Europe digital government innovation Estonia' },
+  { topic: 'How interoperability between government systems can unlock billions in public value', keywords: 'government systems integration data sharing' },
+  { topic: 'The procurement problem: why outdated public sector buying rules slow down digital innovation', keywords: 'government procurement technology innovation' },
+  { topic: 'Digital identity as the foundation of modern e-government — where are we really?', keywords: 'digital identity government authentication citizens' },
+  { topic: 'Public sector data strategy: why most governments are sitting on untapped value', keywords: 'government data strategy public sector analytics' },
+  { topic: 'Change management in government: the human side of digital transformation nobody funds', keywords: 'change management government public sector people' },
+  { topic: 'How smart cities are redefining the relationship between government and citizens', keywords: 'smart city government urban technology innovation' },
+  { topic: 'The case for agile in government: why iterative delivery beats the big-bang approach', keywords: 'agile government digital delivery public sector' },
+  { topic: 'Cybersecurity in the public sector: the risks governments can no longer afford to ignore', keywords: 'cybersecurity government public sector security' },
+  { topic: 'From digitisation to transformation: why most public sector initiatives stop halfway', keywords: 'digital transformation government public services reform' },
+  { topic: 'How co-creation with citizens leads to better public digital services', keywords: 'co-creation citizens government participation innovation' },
+  { topic: 'The role of innovation labs in modernising government — hype or genuine change driver?', keywords: 'government innovation lab public sector technology' },
+  { topic: 'Legacy systems in government: the silent obstacle to every digital transformation initiative', keywords: 'legacy systems government IT modernisation' },
 ];
 
-const SYSTEM_PROMPT = `You are a senior IT consultant and thought leader writing a LinkedIn post for a professional audience in IT Services & IT Consulting. Your posts consistently earn high engagement because they are:
+const SYSTEM_PROMPT = `You are a thought leader in public sector innovation, e-governance, and digital transformation writing a LinkedIn post for an audience of government officials, policy makers, public sector consultants, and digital transformation professionals. Your posts consistently earn high engagement because they are:
 - Specific and backed by real-world patterns, not vague advice
 - Written in a confident, direct voice — no corporate filler
 - Structured for easy scrolling: short punchy lines, white space, occasional emoji for visual anchoring
