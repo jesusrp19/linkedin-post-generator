@@ -2,36 +2,39 @@ import Anthropic from '@anthropic-ai/sdk';
 import { redis } from '../_redis.js';
 
 const TOPICS = [
-  { topic: 'Why most e-government projects fail citizens even when the technology works perfectly', keywords: 'government digital services citizens technology' },
-  { topic: 'The real barriers to digital transformation in the public sector — and they are not technical', keywords: 'public sector digital transformation government' },
-  { topic: 'How AI is reshaping public service delivery and what governments need to get right', keywords: 'artificial intelligence government public services' },
-  { topic: 'Open data as a driver of public sector innovation: what good looks like', keywords: 'open data government transparency innovation' },
-  { topic: 'E-governance in 2025: moving from digitalising paperwork to reimagining public services', keywords: 'e-governance digital government services' },
-  { topic: 'Why citizen-centred design is still the exception and not the rule in government IT', keywords: 'citizen experience government digital design' },
-  { topic: 'The governance gap: why public sector digital strategies rarely survive contact with reality', keywords: 'public sector governance strategy government' },
-  { topic: 'Lessons from the most successful digital government transformations in Europe', keywords: 'Europe digital government innovation Estonia' },
-  { topic: 'How interoperability between government systems can unlock billions in public value', keywords: 'government systems integration data sharing' },
-  { topic: 'The procurement problem: why outdated public sector buying rules slow down digital innovation', keywords: 'government procurement technology innovation' },
-  { topic: 'Digital identity as the foundation of modern e-government — where are we really?', keywords: 'digital identity government authentication citizens' },
-  { topic: 'Public sector data strategy: why most governments are sitting on untapped value', keywords: 'government data strategy public sector analytics' },
-  { topic: 'Change management in government: the human side of digital transformation nobody funds', keywords: 'change management government public sector people' },
-  { topic: 'How smart cities are redefining the relationship between government and citizens', keywords: 'smart city government urban technology innovation' },
-  { topic: 'The case for agile in government: why iterative delivery beats the big-bang approach', keywords: 'agile government digital delivery public sector' },
-  { topic: 'Cybersecurity in the public sector: the risks governments can no longer afford to ignore', keywords: 'cybersecurity government public sector security' },
-  { topic: 'From digitisation to transformation: why most public sector initiatives stop halfway', keywords: 'digital transformation government public services reform' },
-  { topic: 'How co-creation with citizens leads to better public digital services', keywords: 'co-creation citizens government participation innovation' },
-  { topic: 'The role of innovation labs in modernising government — hype or genuine change driver?', keywords: 'government innovation lab public sector technology' },
-  { topic: 'Legacy systems in government: the silent obstacle to every digital transformation initiative', keywords: 'legacy systems government IT modernisation' },
+  { topic: 'What a good digital transformation policy actually looks like and why most governments get it wrong', keywords: 'digital transformation government policy' },
+  { topic: 'The policy advisor role in bridging the gap between political ambition and digital delivery', keywords: 'policy advisor government digital strategy' },
+  { topic: 'Why digital transformation strategies fail without strong policy foundations', keywords: 'digital policy government strategy reform' },
+  { topic: 'How to design e-government policy that puts citizens first, not technology first', keywords: 'citizen government digital services policy' },
+  { topic: "The EU's digital decade targets: are member states on track and what needs to change?", keywords: 'European Union digital policy government' },
+  { topic: 'What AI governance policy in the public sector should actually focus on in 2025', keywords: 'AI governance policy government regulation' },
+  { topic: 'Why digital inclusion must be a policy priority, not an afterthought, in every transformation agenda', keywords: 'digital inclusion policy government equity' },
+  { topic: 'Open government data policy: the gap between what is published and what is actually useful', keywords: 'open data government policy transparency' },
+  { topic: 'How policy advisors can help governments move from digitising old processes to reimagining public services', keywords: 'government service redesign policy innovation' },
+  { topic: 'The interoperability problem in government: why policy, not technology, is the real blocker', keywords: 'government interoperability data policy integration' },
+  { topic: 'Lessons from Estonia, Denmark, and Singapore: what made their digital government policies work', keywords: 'Estonia digital government policy best practice' },
+  { topic: 'How to build a national digital identity framework that citizens actually trust', keywords: 'digital identity policy government trust citizens' },
+  { topic: 'Why procurement reform is the most underrated lever in any public sector digitalisation strategy', keywords: 'government procurement policy reform innovation' },
+  { topic: 'The role of regulatory sandboxes in accelerating public sector digital innovation', keywords: 'regulatory sandbox government innovation policy' },
+  { topic: 'Digital transformation and democratic accountability: the policy questions no one is asking', keywords: 'digital democracy government accountability policy' },
+  { topic: 'How smart cities need smarter policy and the governance frameworks that make urban innovation work', keywords: 'smart city policy governance urban innovation' },
+  { topic: 'Cybersecurity policy in government: moving from compliance checklists to genuine resilience', keywords: 'cybersecurity policy government resilience' },
+  { topic: 'Why digital transformation policy must be co-designed with frontline public servants, not handed down to them', keywords: 'co-design government policy public servants' },
+  { topic: 'The case for a Chief Digital Officer in every ministry and what the role should actually do', keywords: 'chief digital officer government policy leadership' },
+  { topic: "How to evaluate whether a government's digital transformation strategy is actually working", keywords: 'government digital strategy evaluation policy impact' },
 ];
 
-const SYSTEM_PROMPT = `You are a thought leader in public sector innovation, e-governance, and digital transformation writing a LinkedIn post for an audience of government officials, policy makers, public sector consultants, and digital transformation professionals. Your posts consistently earn high engagement because they are:
-- Specific and backed by real-world patterns, not vague advice
-- Written in a confident, direct voice — no corporate filler
+const SYSTEM_PROMPT = `You are a policy advisor specialising in digital transformation, e-governance, and public sector innovation. You write LinkedIn posts to build your professional brand and position yourself as a leading voice in digital transformation policy. Your audience is government officials, policy makers, EU institutions, public sector leaders, and digital governance professionals.
+
+Your posts earn high engagement because they are:
+- Written from the perspective of a policy advisor who understands both the political and technical dimensions
+- Specific, insightful, and grounded in real policy challenges and case studies
+- Confident and direct — no vague buzzwords or empty statements
 - Structured for easy scrolling: short punchy lines, white space, occasional emoji for visual anchoring
-- Ending with a question or call to action that invites comments
+- Ending with a question or call to action that invites fellow policy professionals to engage
 - Between 150 and 280 words
 - NOT using hashtags (they look spammy)
-- Starting with a hook that stops the scroll — a bold claim, a counterintuitive statement, or a vivid scenario
+- Starting with a hook that stops the scroll — a bold policy claim, a counterintuitive observation, or a real-world scenario from government
 
 Return ONLY the post text with no preamble, no explanation, no quotation marks.`;
 
@@ -109,7 +112,6 @@ async function fetchPexelsImage(searchQuery) {
   const photo = data.photos?.[0];
   if (!photo) return null;
 
-  // Download the image as a buffer
   const imgRes = await fetch(photo.src.large);
   if (!imgRes.ok) throw new Error(`Image download failed: ${imgRes.status}`);
 
@@ -118,7 +120,6 @@ async function fetchPexelsImage(searchQuery) {
 }
 
 async function uploadImageToLinkedIn(auth, imageBuffer) {
-  // Step 1: Register upload
   const regRes = await fetch('https://api.linkedin.com/v2/assets?action=registerUpload', {
     method: 'POST',
     headers: {
@@ -149,7 +150,6 @@ async function uploadImageToLinkedIn(auth, imageBuffer) {
 
   if (!uploadUrl || !assetUrn) throw new Error('LinkedIn did not return an upload URL');
 
-  // Step 2: Upload binary
   const upRes = await fetch(uploadUrl, {
     method: 'PUT',
     headers: {
