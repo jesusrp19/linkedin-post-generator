@@ -14,7 +14,7 @@ export default function handler(req, res) {
   authUrl.searchParams.set('response_type', 'code');
   authUrl.searchParams.set('client_id', LINKEDIN_CLIENT_ID);
   authUrl.searchParams.set('redirect_uri', redirectUri);
-  authUrl.searchParams.set('scope', 'r_liteprofile w_member_social');
+  authUrl.searchParams.set('scope', 'openid profile email w_member_social');
   authUrl.searchParams.set('state', state);
 
   res.setHeader('Set-Cookie', `linkedin_oauth_state=${state}; ${cookieFlags}; Max-Age=600`);
